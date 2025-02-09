@@ -1,0 +1,45 @@
+server:
+  port: 8085
+  compression:
+    enabled: true
+    mime-types: text/html, text/xml, text/plain, text/css, text/javascript, application/javascript, application/json
+    min-response-size: 2048
+spring:
+  application:
+    name: product-service
+  data:
+    #Datasource configuration
+    mongodb:
+      uri: mongodb://mymdb:5qcww1iZTvNpU9isEQTT4ndpyqbTdbHWBCOpxUmWDaMUZfDMrhLmm6bya8lwP7g3Q1i4jnJQ3PXpuIrmApYKZw==@mymdb.mongo.cosmos.azure.com:10255/Atirodeas?ssl=true&retryWrites=false
+#Swagger configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  open-api:
+    info:
+      title: Product Service API Documentation
+      description: This is the API documentation for the Product Service
+      version: 1.0.0
+      #termsOfService: https://quickshort.com/terms
+      license:
+        name: No License
+        url: https://github.com/Great-Side-Projects/
+      contact:
+        name: Angel Morales
+        email: angelmoralesb@gmail.com
+
+#Actuator configuration for health check and metrics monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      enabled: true

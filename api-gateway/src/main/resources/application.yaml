@@ -1,0 +1,30 @@
+server:
+  port: 8084
+
+#eureka:
+#  client:
+#    service-url:
+#        defaultZone: http://localhost:8761/eureka
+spring:
+    application:
+        name: api-gateway
+    cloud:
+      gateway:
+        mvc:
+          routes:
+          - id: products-root
+            uri: http://localhost:8085
+            predicates:
+              - Path=/products
+            filters:
+              - RewritePath=/products, /api/products
+          - id: product-service
+            uri: http://localhost:8085 #lb://product-service #http://localhost:8084
+            predicates:
+              - Path=/products/**
+            filters:
+              - RewritePath=/products/?(?<segment>.*), /api/products/$\{segment}
+            #  - name: CircuitBreaker
+            #    args:
+            #      name: productCircuitBreaker
+            #      fallbackUri: forward:/fallback
