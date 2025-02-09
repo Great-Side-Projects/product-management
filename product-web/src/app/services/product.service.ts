@@ -8,7 +8,7 @@ import {Product, ResponseDTO} from '../models/product';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8084/products'; // URL del API Gateway
+  private apiUrl = 'http://172.17.0.1:8084/products'; // URL del API Gateway
 
   constructor(private http: HttpClient) { }
 

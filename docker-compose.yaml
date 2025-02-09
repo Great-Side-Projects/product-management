@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  product-service:
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+      args:
+      - MONGODB_URI=${MONGODB_URI}
+    ports:
+      - "8085:8085"
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    depends_on:
+      - product-service
+
+  frontend:
+    build: ./product-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
