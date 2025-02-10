@@ -1,30 +1,56 @@
 server:
   port: 8084
 
-#eureka:
-#  client:
-#    service-url:
-#        defaultZone: http://localhost:8761/eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.17.0.1:8761/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: localhost
 spring:
-    application:
-        name: api-gateway
-    cloud:
-      gateway:
-        mvc:
-          routes:
-          - id: products-root
-            uri: http://172.17.0.1:8085
-            predicates:
-              - Path=/products
-            filters:
-              - RewritePath=/products, /api/products
-          - id: product-service
-            uri: http://172.17.0.1:8085 #lb://product-service #http://localhost:8084
-            predicates:
-              - Path=/products/**
-            filters:
-              - RewritePath=/products/?(?<segment>.*), /api/products/$\{segment}
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:4200"
+              - "http://localhost"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders:
+              - "*"
+            allowCredentials: false
+      routes:
+      - id: products-root
+        # uri: http://172.17.0.1:8085
+        uri: lb://product-service
+        predicates:
+          - Path=/products
+        filters:
+          - RewritePath=/products, /api/products
+      - id: product-service
+        #uri: http://172.17.0.1:8085 #lb://product-service #http://localhost:8084
+        uri: lb://product-service
+        predicates:
+          - Path=/products/**
+        filters:
+          - RewritePath=/products/?(?<segment>.*), /api/products/$\{segment}
             #  - name: CircuitBreaker
-            #    args:
-            #      name: productCircuitBreaker
-            #      fallbackUri: forward:/fallback
+          #    args:
+          #      name: productCircuitBreaker
+          #      fallbackUri: forward:/fallback
+    #log
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: info
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
